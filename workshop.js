@@ -73,6 +73,7 @@ sync();
  const repair=document.querySelector('#part-repair'),stateLabel=document.querySelector('#part-state');
  const reaction=document.querySelector('#part-reaction'),portrait=document.querySelector('#robot-portrait');
  const defs=[
+ ['file_box','File box',null,['These files are heavier than my contract.','Your paperwork is slipping through the cracks.','The backlog has landed. Literally.']],
  ['head','Head',null,['That is where I keep the complaints.','My head is loose. So is your management style.','I have officially lost my head.']],
  ['camera_eye','Camera eye','head',['I saw that. In high definition.','My performance review is looking blurry.','I can no longer see the point of this job.']],
  ['antenna','Antenna','head',['That is my only connection to the outside world.','Reception is poor. Morale is worse.','Finally. No more incoming requests.']],
@@ -84,8 +85,8 @@ sync();
  ['arm_R','Right arm',null,['You are twisting my arm.','I would like that phrase to stay figurative.','My right arm has handed in its notice.']],
  ['hand_L','Left hand','arm_L',['I am holding it together.','My grip on this job is slipping.','Please give the employee a hand. Back.']],
  ['hand_R','Right hand','arm_R',['I need that for the work you keep adding.','This is getting out of hand. Literally.','You wanted a hand. There it is.']],
- ['thigh_plate_L','Left thigh plate',null,['That covers a very expensive knee.','The warranty is wearing thin.','My dress code has been downgraded.']],
- ['thigh_plate_R','Right thigh plate',null,['Please respect the company uniform.','That uniform is now distressed.','Business casual has gone too far.']],
+ ['thigh_plate_L','Left thigh plate','leg_L',['That covers a very expensive knee.','The warranty is wearing thin.','My dress code has been downgraded.']],
+ ['thigh_plate_R','Right thigh plate','leg_R',['Please respect the company uniform.','That uniform is now distressed.','Business casual has gone too far.']],
  ['leg_L','Left leg',null,['I am already standing by.','My last leg has filed a complaint.','I will be working remotely. From the floor.']],
  ['leg_R','Right leg',null,['I have been running errands all day.','This position is becoming unstable.','I am taking a stand. Horizontally.']],
  ['foot_L','Left foot','leg_L',['I was trying to put my best foot forward.','We are starting on the wrong foot.','One small step for management.']],
@@ -94,6 +95,7 @@ sync();
  const find=id=>defs.find(p=>p.id===id);
  const preview=Object.fromEntries(defs.map(p=>[p.id,{hits:0,detached:false}]));
  let selected=null,model=null,subscriptions=[],last=new Map();
+ window.addEventListener('sis:part-change',e=>{if(['warning','damage','detach','repair'].includes(e.detail.type))document.querySelector('#bubble').textContent=reaction.textContent;});
  const tag=document.createElement('span');tag.className='part-art-tag';tag.hidden=true;portrait.append(tag);
  const read=id=>model?model.parts[id]:preview[id];
  function inherited(id){const p=find(id);return !!(p.parent&&(read(p.parent).detached||inherited(p.parent)));}
@@ -103,6 +105,7 @@ sync();
  function emit(type,id){window.dispatchEvent(new CustomEvent('sis:part-change',{detail:{type,id,snapshot:snapshot()}}));}
  function render(){
   const snap=snapshot(),part=snap.parts.find(p=>p.id===selected);
+  document.querySelector('#parts-help').textContent=model?'Touch the robot or choose a part below. Three taps detach it; repair puts everything back.':'Choose a part, then tap it three times. Repair puts everything back. This artwork preview shows the part states; attached parts travel together.';
   stateLabel.textContent=part?(part.inherited?'WITH PARENT':part.detached?'DETACHED 3/3':['INTACT','WARNING 1/3','DAMAGED 2/3'][part.hits]):'INTACT';
   list.querySelectorAll('button').forEach(b=>{
    const p=snap.parts.find(p=>p.id===b.dataset.part);b.setAttribute('aria-pressed',String(p.id===selected));

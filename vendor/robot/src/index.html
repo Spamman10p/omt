@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>SIS detachable robot</title><style>
+body{margin:0;font:14px system-ui;background:#1e2124;color:#ddd}#stage{width:100vw;height:75vh;touch-action:none}
+#bar{padding:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#parts{display:flex;flex-wrap:wrap;gap:4px;padding:0 8px}
+button{background:#3b3f2c;color:#eee;border:1px solid #6b6e48;border-radius:6px;padding:4px 8px}
+#fb{display:none;max-width:100%;max-height:75vh}.fallback #fb{display:block}.fallback #stage{display:none}
+</style></head><body><div id="stage"></div><img id="fb" src="fallback.png" alt="SIS robot (static fallback image)">
+<div id="bar"><button id="repair">Repair / reset</button><span id="info" aria-live="polite">Loading…</span></div>
+<details open><summary style="padding:0 8px">Parts (keyboard alternative)</summary><div id="parts"></div></details>
+<script type="module" src="app.js"></script></body></html>

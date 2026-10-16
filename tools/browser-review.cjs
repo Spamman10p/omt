@@ -1,9 +1,9 @@
 'use strict';
-const {chromium}=require('playwright');
+const {chromium}=require('playwright-core');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const browser=await chromium.launch({executablePath:process.env.CHROME,headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
  const errors=[],failed=[],remote=[];let checks=0;
  page.on('pageerror',e=>errors.push(e.message));
@@ -97,7 +97,7 @@ const fs=require('node:fs');
  await page.locator('#part-tap').click();await page.locator('#part-tap').click();
  await page.screenshot({path:'/out/sol-parts-desktop.png',fullPage:true});
 
- ok(await page.locator('#part-list button').count()===17,'all 17 model parts have accessible controls');
+ ok(await page.locator('#part-list button').count()===18,'all 18 model parts have accessible controls');
  ok(await page.evaluate(()=>{
   const w=SISPartWorkbench;w.repair();for(let i=0;i<3;i++)w.tapPart('arm_R');
   const s=w.getSnapshot(),hand=s.parts.find(p=>p.id==='hand_R');
@@ -121,7 +121,7 @@ const fs=require('node:fs');
  ok(await page.evaluate(()=>SISPartWorkbench.getSnapshot().mode==='model'),'model fixture connects');
  await page.locator('[data-part="head"]').click();
  await page.locator('#part-tap').click();
- ok(await page.evaluate(()=>robotFixture.parts.head.hits===1&&SISPartWorkbench.getSnapshot().parts[0].hits===1),'UI hit goes through model once');
+ ok(await page.evaluate(()=>robotFixture.parts.head.hits===1&&SISPartWorkbench.getSnapshot().parts.find(p=>p.id==='head').hits===1),'UI hit goes through model once');
  await page.evaluate(()=>{SISPartWorkbench.bindModel(robotFixture);robotFixture.hit('head');robotFixture.hit('head');});
  ok(await page.evaluate(()=>partEvents.filter(e=>e.type==='detach'&&e.id==='head').length===1),'model damage and detach events produce one notification');
  await page.locator('#part-repair').click();

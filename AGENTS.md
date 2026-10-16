@@ -9,4 +9,4 @@
 - Never commit credentials, caches, node_modules or generated test artifacts.
 - No providers, wallets, persistence, public service binds or production deployment without explicit scope.
 - Use node tools/qa.js, node --check workshop.js, and relevant browser checks in Docker.
-- Actual model integration is pending; fixture-based API tests are not proof of GLB/WebGL behavior.
+- The model is integrated. Preserve original artwork fallback and run sh tools/check.sh after runtime changes; fixture tests alone are not proof of GLB/WebGL behavior.

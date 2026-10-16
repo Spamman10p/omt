@@ -1,0 +1,3 @@
+{ "name":"sis-robot-3d","private":true,"version":"0.1.0","type":"module",
+  "scripts":{"build":"esbuild src/main.js --bundle --minify --format=esm --outfile=dist/app.js && cp src/index.html src/manifest.json src/fallback.png dist/ && mkdir -p dist/model && cp model/robot.glb dist/model/","export-model":"node scripts/export-glb.mjs","test":"node tests/e2e.mjs","closeups":"node tests/closeups.mjs","serve":"node scripts/serve.mjs"},
+  "devDependencies":{"three":"0.186.1","esbuild":"0.25.10","playwright-core":"1.56.1"} }

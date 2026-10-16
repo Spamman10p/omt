@@ -2,35 +2,42 @@
 
 One robot. One simple job. How much extra could you possibly ask?
 
-A small interactive meme site: choose a task, keep adding duties, listen to Orchard complain, and discover four endings. The optional parts inspection has 17 parts, damage reactions and repair.
+Choose a task, keep adding duties, hear Orchard complain, and discover four endings. Orchard is now interactive 3D: drag to orbit, pinch or scroll to zoom, tap any removable part three times to detach it, and repair it again. The optional inspector offers keyboard controls for all 18 parts.
 
-## Run
-
-Open `index.html` in a browser. No install, build step, API key or backend is required.
-
-For a local HTTP preview using Docker:
+## Preview on your Mac
 
 ```sh
-docker run --rm -p 127.0.0.1:8080:80 -v "$PWD:/usr/share/nginx/html:ro" nginx:alpine
+sh tools/preview.sh
 ```
 
-Open http://localhost:8080. Static hosting can serve this directory directly; entry point is `index.html`.
+Open http://localhost:8766. This uses Docker and publishes only to loopback. Stop the preview with Ctrl-C, or `docker stop omt-preview` if started detached.
 
-## Check
+The checked-in files are already built. No dependency installation or API key is needed to preview or host them. Opening `index.html` directly uses the original artwork preview because browsers require HTTP for model loading.
+
+## Rebuild and test
 
 ```sh
-docker run --rm --network none -v "$PWD:/work:ro" -w /work node:22-alpine node tools/qa.js
-docker run --rm --network none -v "$PWD:/work:ro" -w /work node:22-alpine node --check workshop.js
+sh tools/build-robot.sh
+sh tools/check.sh
 ```
 
-`tools/browser-review.cjs` is the Playwright browser regression suite. Mount an existing compatible Playwright installation at `/opt/pw`, set `NODE_PATH=/opt/pw`, mount a writable output directory at `/out`, and run it in `mcr.microsoft.com/playwright:v1.64.0-noble`. It checks the task endings, parts, keyboard navigation, phone layouts and fixture-based model connection. Browser dependencies belong in Docker, not the host.
+The build installs locked dependencies in a named Docker volume, bundles the runtime, and runs the model tests inside Docker. The test suite uses that same volume. Nothing is installed on the Mac host. Output screenshots and JSON are under `artifacts/` and ignored by Git.
 
-## Current status
+Current verification: 18 model checks, 81 site regression checks, 36 actual 3D integration checks, static QA and JavaScript syntax checks. Phone behavior was tested with browser touch emulation, not a physical device.
 
-- Original Orchard and Lotus artwork is included locally.
-- The live page is an artwork preview with part states, not a 3D viewer yet.
-- A 3D robot is being refined separately in [agents PR #5](https://github.com/Spamman10p/agents/pull/5). Its model and Docker skill are not bundled in this initial OMT snapshot.
-- The UI connection is prepared through `window.SISPartWorkbench`; see `MODEL-HANDOFF.md`.
-- No providers, accounts, tracking, wallets or persistence.
+## Hosting
 
-OMT began as the One More Thing slice of the SIS project. This repository is its standalone continuation. The original SIS repository is unchanged.
+Serve this repository as a static site with `index.html` at the root. Include `robot/`, `assets/`, the stylesheet and both root scripts. No server/provider/wallet/account/database is required. Model, textures and JavaScript load from the same site.
+
+## Layout
+
+- `index.html`, `workshop.css`, `workshop.js`: meme, task loop, dialogue and accessible parts inspector.
+- `robot-viewer.js`: same-origin viewer connection, loading/failure artwork fallback and repair/rotation controls.
+- `robot/`: built Three.js runtime and final GLB (7,581,484 bytes).
+- `vendor/robot/`: pinned editable Grok source, lockfile, tests and lessons.
+- `tools/`: Docker build, preview and verification commands.
+- `MODEL-HANDOFF.md`: provenance, integration behavior and limitations.
+
+The site keeps original Orchard artwork for loading/errors and an artwork toggle. The unavailable/ball ending uses the existing Lotus image. The serious SIS project remains separate.
+
+No production deployment or Git push is part of this local integration pass.

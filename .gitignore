@@ -5,3 +5,6 @@ artifacts/
 .env.*
 !.env.example
 *.log
+vendor/robot/dist/
+vendor/robot/screenshots/
+vendor/robot/model/*.glb
